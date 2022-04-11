@@ -1,9 +1,9 @@
-import { FormEvent, useContext, useState } from "react";
+import React, { FormEvent, useState } from "react";
 import Modal from "react-modal";
 import closeImg from "../../assets/close.svg";
 import incomeImg from "../../assets/income.svg";
 import outcomeImg from "../../assets/outcome.svg";
-import { TransactionsContext } from "../../TransactionsContext";
+import { useTransactions } from "../../hooks/useTransactions";
 import { Container, RadioBox, TransactionTypeContainer } from "./styles";
 
 interface NewTransactionModalProps {
@@ -15,12 +15,12 @@ export function NewTransactionModal({
   isOpen,
   onRequestClose,
 }: NewTransactionModalProps) {
-  const { createTransaction } = useContext(TransactionsContext);
+  const { createTransaction } = useTransactions();
 
   const [title, setTitle] = useState("");
   const [amount, setAmont] = useState(0);
   const [category, setCategory] = useState("");
-  const [type, setType] = useState("Deposit");
+  const [type, setType] = useState("deposit");
 
   async function handleCreateNewTransaction(event: FormEvent) {
     event.preventDefault();
@@ -36,7 +36,7 @@ export function NewTransactionModal({
     setTitle("");
     setAmont(0);
     setCategory("");
-    setType("Deposit");
+    setType("deposit");
 
     // Fecha o modal quando inserir a trasação
     onRequestClose();
@@ -77,9 +77,9 @@ export function NewTransactionModal({
           <RadioBox
             type="button"
             onClick={() => {
-              setType("Deposit");
+              setType("deposit");
             }}
-            isActive={type === "Deposit"}
+            isActive={type === "deposit"}
             activeColor="green"
           >
             <img src={incomeImg} alt="Entrada" />
@@ -89,9 +89,9 @@ export function NewTransactionModal({
           <RadioBox
             type="button"
             onClick={() => {
-              setType("Withdraw");
+              setType("withdraw");
             }}
-            isActive={type === "Withdraw"}
+            isActive={type === "withdraw"}
             activeColor="red"
           >
             <img src={outcomeImg} alt="Saída" />

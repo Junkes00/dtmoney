@@ -1,5 +1,11 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
-import { api } from "./services/api";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { api } from "../services/api";
 
 interface Transaction {
   id: number;
@@ -21,7 +27,7 @@ interface TransactionsContextData {
   createTransaction: (transaction: TransactionInput) => Promise<void>; // Identifica que a função é assincrona
 }
 
-export const TransactionsContext = createContext<TransactionsContextData>(
+const TransactionsContext = createContext<TransactionsContextData>(
   {} as TransactionsContextData // Hack para forçar o React a entender que a função tem sim o formato que queremos
 );
 
@@ -36,7 +42,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
   }, []);
 
   async function createTransaction(transactionInput: TransactionInput) {
-    const response = await api.post("/transactions", transactionInput);
+    const response = await api.post("/transactions", {
+      ...transactionInput,
+      createdAt: new Date(),
+    });
     const { transaction } = response.data;
 
     // Salva os novos valores na listagem de transações através da imutabilidade 1:51
@@ -48,4 +57,10 @@ export function TransactionsProvider({ children }: TransactionProviderProps) {
       {children}
     </TransactionsContext.Provider>
   );
+}
+
+export function useTransactions() {
+  const context = useContext(TransactionsContext);
+
+  return context;
 }
